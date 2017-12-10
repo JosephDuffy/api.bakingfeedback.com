@@ -1,5 +1,6 @@
 import Loki = require('lokijs');
 import { Service } from 'typedi';
+import * as uuid from 'uuid/v4';
 
 import Survey from '../interfaces/Survey';
 import SurveyResult from '../interfaces/SurveyResult';
@@ -36,12 +37,36 @@ export default class Database {
     });
   }
 
+  public surveyWithId(id: string): Survey & DatabaseProperties {
+    return this.surveys.findOne({ id });
+  }
+
+  public latestSurvey(): Survey & DatabaseProperties {
+    return this.surveys.chain()
+                       .simplesort('meta.created', true)
+                       .limit(1)
+                       .data()[0];
+  }
+
   public retrieveAllSurveys(): Survey[] {
     return this.surveys.find();
   }
 
-  public addSurveyResult(result: SurveyResult) {
-    this.surveyResults.add(result);
+  public addSurveyResult(result: {
+    readonly surveyId: string;
+    readonly answers: Array<{ [inputId: string]: any }>;
+    readonly name: string;
+    readonly anonymous: boolean;
+    readonly email?: string;
+  }): SurveyResult {
+    const databaseResult: SurveyResult = {
+      ...result,
+      id: uuid(),
+    };
+
+    this.surveyResults.insertOne(databaseResult);
+
+    return databaseResult;
   }
 
   public retrieveResultsToSurvey(surveyId: string): SurveyResult[] {
@@ -62,4 +87,8 @@ export default class Database {
     return this.loki.addCollection(collectionName, options);
   }
 
+}
+
+export interface DatabaseProperties {
+  readonly id: string;
 }

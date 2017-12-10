@@ -8,9 +8,5 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "target": "es2015"
-  },
-  "files": [
-    "src/index.ts",
-    "src/declarations.d.ts"
-  ]
+  }
 }

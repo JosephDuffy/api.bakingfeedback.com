@@ -1,13 +1,9 @@
 
 namespace Question {
   export interface Input {
-    readonly type: InputType;
+    readonly id: string;
+    readonly type: 'images' | 'text';
     readonly options: Options;
-  }
-
-  export enum InputType {
-    Images,
-    Text,
   }
 
   export interface ImagesOptions {

@@ -15,6 +15,7 @@ export default class Server {
     const controllers = await this.loadControllers();
     this.server = createKoaServer({
         controllers,
+        cors: true,
     });
 
     const listenPort = 13515;
