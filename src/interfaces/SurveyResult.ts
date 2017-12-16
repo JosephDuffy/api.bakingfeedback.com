@@ -11,6 +11,6 @@ export default interface SurveyResult {
 
   readonly anonymous: boolean;
 
-  readonly email?: string;
+  readonly email: string;
 
 }

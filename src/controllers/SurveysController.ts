@@ -31,9 +31,15 @@ export default class SurveysController {
       readonly answers: Array<{ [inputId: string]: any }>;
       readonly name: string;
       readonly anonymous: boolean;
-      readonly email?: string;
+      readonly email: string;
     },
   ): Promise<SurveyResult & DatabaseProperties> {
+    const existingResult = this.database.retrieveResultToSurvey(surveyId, body.email);
+
+    if (!existingResult) {
+      throw new HttpError(400, 'A result has already been submitted with this email address');
+    }
+
     const result = {
       surveyId,
       ...body,

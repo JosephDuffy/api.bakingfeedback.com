@@ -57,7 +57,7 @@ export default class Database {
     readonly answers: Array<{ [inputId: string]: any }>;
     readonly name: string;
     readonly anonymous: boolean;
-    readonly email?: string;
+    readonly email: string;
   }): SurveyResult {
     const databaseResult: SurveyResult = {
       ...result,
@@ -75,6 +75,15 @@ export default class Database {
         id: surveyId,
       },
     }).data();
+  }
+
+  public retrieveResultToSurvey(surveyId: string, email: string): SurveyResult | null {
+    return this.surveyResults.findOne({
+      survey: {
+        id: surveyId,
+      },
+      email,
+    });
   }
 
   private loadOrCreateCollection<StoredType>(collectionName: string, options?: LokiCollectionOptions): LokiCollection<StoredType> {
