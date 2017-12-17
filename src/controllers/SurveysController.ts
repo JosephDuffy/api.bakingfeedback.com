@@ -40,13 +40,12 @@ export default class SurveysController {
       throw new BadRequestErrorWithCode(1, 'A result has already been submitted with this email address');
     }
 
-    const result = {
-      surveyId,
+    const surveyResult = {
       ...body,
       email: emailHashString,
     };
 
-    return this.database.addSurveyResult(surveyId, body);
+    return this.database.addSurveyResult(surveyId, surveyResult);
   }
 
 }
