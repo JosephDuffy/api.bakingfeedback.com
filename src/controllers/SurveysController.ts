@@ -36,7 +36,7 @@ export default class SurveysController {
     const emailHashString = emailHash.toString('hex');
     const existingResult = this.database.retrieveResultToSurvey(surveyId, emailHashString);
 
-    if (!existingResult) {
+    if (existingResult) {
       throw new BadRequestErrorWithCode(1, 'A result has already been submitted with this email address');
     }
 
