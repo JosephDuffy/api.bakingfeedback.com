@@ -12,7 +12,7 @@ export default class Database {
   private loki: Loki;
 
   private surveys: LokiCollection<Survey>;
-  private surveyResults: LokiCollection<SurveyResult>;
+  private surveyResults: LokiCollection<SurveyResult.Full>;
 
   constructor(filename: string = './database.json') {
     this.loki = new Loki(filename, {
@@ -52,24 +52,19 @@ export default class Database {
     return this.surveys.find();
   }
 
-  public addSurveyResult(result: {
-    readonly surveyId: string;
-    readonly answers: Array<{ [inputId: string]: any }>;
-    readonly name: string;
-    readonly anonymous: boolean;
-    readonly email: string;
-  }): SurveyResult {
-    const databaseResult: SurveyResult = {
-      ...result,
+  public addSurveyResult(surveyId: string, body: SurveyResult.Body): SurveyResult.Full {
+    const fullResult: SurveyResult.Full = {
+      ...body,
+      surveyId,
       id: uuid(),
     };
 
-    this.surveyResults.insertOne(databaseResult);
+    this.surveyResults.insertOne(fullResult);
 
-    return databaseResult;
+    return fullResult;
   }
 
-  public retrieveResultsToSurvey(surveyId: string): SurveyResult[] {
+  public retrieveResultsToSurvey(surveyId: string): SurveyResult.Full[] {
     return this.surveyResults.find({
       survey: {
         id: surveyId,
@@ -77,11 +72,9 @@ export default class Database {
     }).data();
   }
 
-  public retrieveResultToSurvey(surveyId: string, email: string): SurveyResult | null {
+  public retrieveResultToSurvey(surveyId: string, email: string): SurveyResult.Full | null {
     return this.surveyResults.findOne({
-      survey: {
-        id: surveyId,
-      },
+      surveyId,
       email,
     });
   }

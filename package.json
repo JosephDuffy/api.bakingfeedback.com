@@ -15,6 +15,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "class-validator": "^0.7.3",
+    "crypto-promise": "^2.0.0",
     "kcors": "2",
     "koa": "^2.4.1",
     "koa-bodyparser": "^4.2.0",

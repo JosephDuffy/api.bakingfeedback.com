@@ -1,9 +1,12 @@
-import { Body, Get, HttpCode, HttpError, JsonController, OnNull, OnUndefined, Param, Post, Put } from 'routing-controllers';
+import { IsEmail } from 'class-validator';
+import * as crypto from 'crypto-promise';
+import { BadRequestError, Body, Get, HttpCode, JsonController, OnNull, OnUndefined, Param, Post, Put } from 'routing-controllers';
 import { Inject, Service } from 'typedi';
 import * as winston from 'winston';
 
 import Survey from '../interfaces/Survey';
 import SurveyResult from '../interfaces/SurveyResult';
+import { BadRequestErrorWithCode } from '../models/BadRequestErrorWithCode';
 import Database, { DatabaseProperties } from '../models/Database';
 
 @JsonController('/surveys')
@@ -27,25 +30,23 @@ export default class SurveysController {
   @HttpCode(201)
   public async saveSurveyResult(
     @Param('surveyId') surveyId: string,
-    @Body() body: {
-      readonly answers: Array<{ [inputId: string]: any }>;
-      readonly name: string;
-      readonly anonymous: boolean;
-      readonly email: string;
-    },
-  ): Promise<SurveyResult & DatabaseProperties> {
-    const existingResult = this.database.retrieveResultToSurvey(surveyId, body.email);
+    @Body() body: SurveyResult.Body,
+  ): Promise <SurveyResult.Full> {
+    const emailHash = await crypto.hash('md5')(body.email);
+    const emailHashString = emailHash.toString('hex');
+    const existingResult = this.database.retrieveResultToSurvey(surveyId, emailHashString);
 
     if (!existingResult) {
-      throw new HttpError(400, 'A result has already been submitted with this email address');
+      throw new BadRequestErrorWithCode(1, 'A result has already been submitted with this email address');
     }
 
     const result = {
       surveyId,
       ...body,
+      email: emailHashString,
     };
 
-    return this.database.addSurveyResult(result);
+    return this.database.addSurveyResult(surveyId, body);
   }
 
 }

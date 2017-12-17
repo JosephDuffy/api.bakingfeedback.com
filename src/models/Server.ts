@@ -20,8 +20,17 @@ export default class Server {
 
     const listenPort = 13515;
 
-    this.server.listen(listenPort);
     this.server.use(koaLogger(winston));
+    this.server.use(async (ctx, next) => {
+      try {
+        await next();
+      } catch (error) {
+        winston.error('Error occurred:', error.message, error.stackTrace);
+        throw error;
+      }
+    });
+
+    this.server.listen(listenPort);
 
     winston.info(`HTTP server listening at on port ${listenPort}`);
   }

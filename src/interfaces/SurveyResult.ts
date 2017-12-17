@@ -1,16 +1,19 @@
+import { IsEmail } from 'class-validator';
 
-export default interface SurveyResult {
+namespace SurveyResult {
+  export class Body {
+    public readonly answers: Array<{ [inputId: string]: any }>;
+    public readonly name: string;
+    public readonly anonymous: boolean;
+    @IsEmail()
+    public readonly email: string;
+  }
 
-  readonly id: string;
+  export class Full extends Body {
+    public readonly id: string;
 
-  readonly surveyId: string;
-
-  readonly answers: Array<{ [inputId: string]: any }>;
-
-  readonly name: string;
-
-  readonly anonymous: boolean;
-
-  readonly email: string;
-
+    public readonly surveyId: string;
+  }
 }
+
+export default SurveyResult;
