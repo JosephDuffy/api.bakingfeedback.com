@@ -32,7 +32,7 @@ export default class SurveysController {
     @Param('surveyId') surveyId: string,
     @Body() body: SurveyResult.Body,
   ): Promise <SurveyResult.Full> {
-    const emailHash = await crypto.hash('md5')(body.email);
+    const emailHash = await crypto.hash('md5')(body.email.toLowerCase());
     const emailHashString = emailHash.toString('hex');
     const existingResult = this.database.retrieveResultToSurvey(surveyId, emailHashString);
 
