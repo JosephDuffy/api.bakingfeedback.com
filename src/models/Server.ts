@@ -41,10 +41,12 @@ export default class Server {
 
     const controllerFiles = await fs.readdir(controllersDirectory);
 
-    return controllerFiles.map((controllerFile) => {
-      const fullPath = path.join(controllersDirectory, controllerFile);
-      return require(fullPath).default;
-    });
+    return controllerFiles
+      .filter(filename => filename.endsWith('.ts') && !filename.endsWith('.d.ts') || filename.endsWith('js'))
+      .map(filename => {
+        const fullPath = path.join(controllersDirectory, filename);
+        return require(fullPath).default;
+      });
   }
 
 }
