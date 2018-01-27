@@ -55,6 +55,7 @@ export default class Database {
   public addSurveyResult(surveyId: string, body: SurveyResult.Body): SurveyResult.Full {
     const fullResult: SurveyResult.Full = {
       ...body,
+      showName: body.showName || false,
       surveyId,
       id: uuid(),
     };

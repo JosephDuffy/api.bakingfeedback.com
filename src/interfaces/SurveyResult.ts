@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsBoolean, IsEmail, MinLength } from 'class-validator';
+import { ArrayMinSize, IsBoolean, IsEmail, IsOptional, MinLength } from 'class-validator';
 
 namespace SurveyResult {
   export class Body {
@@ -10,7 +10,8 @@ namespace SurveyResult {
     public readonly name: string;
 
     @IsBoolean()
-    public readonly showName: boolean;
+    @IsOptional()
+    public readonly showName?: boolean;
 
     @IsEmail()
     public readonly email: string;
@@ -21,6 +22,8 @@ namespace SurveyResult {
     public readonly id: string;
 
     public readonly surveyId: string;
+
+    public readonly showName: boolean;
   }
 }
 
