@@ -1,13 +1,13 @@
 {
   "name": "api.bakingfeedback.com",
   "version": "0.1.0",
-  "main": "build/index.js",
   "repository": "https://github.com/josephduffy/api.bakingfeedback.com",
   "author": "Joseph Duffy",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "nodemon",
+    "start": "node build/index.js",
+    "start:watch": "nodemon",
     "build": "tsc",
     "build:watch": "tsc -w",
     "lint": "tslint 'src/**/*.ts' --exclude 'src/**/*.d.ts' --type-check --project ./tsconfig.json",
