@@ -11,8 +11,8 @@ export default class Database {
   /// The Loki instance backing the database
   private loki: Loki;
 
-  private surveys: LokiCollection<Survey>;
-  private surveyResults: LokiCollection<SurveyResult.Full>;
+  private surveys: Loki.Collection<Survey>;
+  private surveyResults: Loki.Collection<SurveyResult.Full>;
 
   constructor(filename: string = './database.json') {
     this.loki = new Loki(filename, {
@@ -43,7 +43,7 @@ export default class Database {
 
   public latestSurvey(): Survey & DatabaseProperties {
     return this.surveys.chain()
-                       .simplesort('meta.created', true)
+                       .simplesort('meta.created' as any, true)
                        .limit(1)
                        .data()[0];
   }
@@ -53,24 +53,20 @@ export default class Database {
   }
 
   public addSurveyResult(surveyId: string, body: SurveyResult.Body): SurveyResult.Full {
-    const fullResult: SurveyResult.Full = {
+    const fullResult = {
       ...body,
       showName: body.showName || false,
       surveyId,
       id: uuid(),
-    };
+    } as SurveyResult.Full;
 
-    this.surveyResults.insertOne(fullResult);
-
-    return fullResult;
+    return this.surveyResults.insertOne(fullResult);
   }
 
   public retrieveResultsToSurvey(surveyId: string): SurveyResult.Full[] {
     return this.surveyResults.find({
-      survey: {
-        id: surveyId,
-      },
-    }).data();
+      surveyId,
+    });
   }
 
   public retrieveResultToSurvey(surveyId: string, email: string): SurveyResult.Full | null {
@@ -80,7 +76,7 @@ export default class Database {
     });
   }
 
-  private loadOrCreateCollection<StoredType>(collectionName: string, options?: LokiCollectionOptions): LokiCollection<StoredType> {
+  private loadOrCreateCollection<StoredType extends object>(collectionName: string, options?: any): Loki.Collection<StoredType> {
     const loadedCollection = this.loki.getCollection<StoredType>(collectionName);
 
     if (loadedCollection !== null) {

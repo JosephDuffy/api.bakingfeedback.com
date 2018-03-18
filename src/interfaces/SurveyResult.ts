@@ -24,6 +24,25 @@ namespace SurveyResult {
     public readonly surveyId: string;
 
     public readonly showName: boolean;
+
+    public readonly meta: {
+      readonly created: number;
+    };
+  }
+
+  export class Public {
+
+    public readonly answers: Array<{ [inputId: string]: any }>;
+
+    public readonly displayName: string;
+
+    public readonly submissionDate: Date;
+
+    constructor(fullResult: Full) {
+      this.answers = fullResult.answers;
+      this.displayName = fullResult.showName ? fullResult.name : 'Anonymous';
+      this.submissionDate = new Date(fullResult.meta.created);
+    }
   }
 }
 
